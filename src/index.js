@@ -1,7 +1,22 @@
+import './styles/normalize.css';
 import './styles/main.scss';
+import Keyboard from './keyboard';
 
 const BODY = document.querySelector('body');
-
+const WRAPPER = document.createElement('div');
+WRAPPER.classList.add('wrapper');
+BODY.appendChild(WRAPPER);
+const CONTAINER = document.createElement('div');
+CONTAINER.classList.add('container');
+WRAPPER.appendChild(CONTAINER);
 const H1 = document.createElement('h1');
-
-BODY.appendChild(H1).innerText = 'Virtual-Keyboard';
+CONTAINER.appendChild(H1).innerText = 'Virtual-Keyboard';
+const KEYBOARD = new Keyboard();
+CONTAINER.appendChild(KEYBOARD.init());
+const SECTION_FOOTER = document.createElement('div');
+SECTION_FOOTER.classList.add('footer');
+CONTAINER.appendChild(SECTION_FOOTER);
+const P1 = document.createElement('p');
+const P2 = document.createElement('p');
+SECTION_FOOTER.appendChild(P1).innerText = 'Клавиатура создана в операционной системе Windows';
+SECTION_FOOTER.appendChild(P2).innerText = 'Для переключения языка комбинация: левыe Alt + Shift';
