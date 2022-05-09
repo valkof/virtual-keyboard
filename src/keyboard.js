@@ -154,12 +154,32 @@ class Keyboard {
       case 'AltLeft':
         status.alt = true;
         break;
+      case 'Tab':
+        TEXTAREA.setRangeText('\t', TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+        break;
+      case 'Backspace':
+        if (TEXTAREA.selectionStart > 0) {
+          TEXTAREA.setRangeText('', TEXTAREA.selectionStart - 1, TEXTAREA.selectionStart, 'end');
+        }
+        break;
+      case 'Delete':
+        if (TEXTAREA.selectionEnd > 0) {
+          TEXTAREA.setRangeText('', TEXTAREA.selectionStart, TEXTAREA.selectionStart + 1, 'end');
+        }
+        break;
+      case 'Enter':
+        if (TEXTAREA.selectionEnd > 0) {
+          TEXTAREA.setRangeText('', TEXTAREA.selectionStart, TEXTAREA.selectionStart + 1, 'end');
+        }
+        break;
       default:
-        TEXTAREA.value += BUTTON.querySelector('span:not(.hidden)').innerText;
+        TEXTAREA.setRangeText(BUTTON.querySelector('span:not(.hidden)').innerText, TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+        // console.log(fff);
         break;
     }
     status.combin.add(event.code);
     console.log(event.code);
+    return false;
   }
 
   upEvent(event) {
@@ -182,7 +202,7 @@ class Keyboard {
     for (let code of asd) {
       if (!status.combin.has(code)) {
         status.combin.delete(event.code);
-        return;
+        return false;
       }
     }
     // console.log('ok');
@@ -194,6 +214,10 @@ class Keyboard {
     }
     changeButton();
     localStorage.setItem('lang', status.lang);
+    // const TEXTAREA = document.querySelector('textarea');
+    // TEXTAREA.focus(true);
+    // document.onkeyup = () => false;
+    return false;
   }
 }
 
