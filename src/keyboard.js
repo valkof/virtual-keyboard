@@ -8,10 +8,49 @@ const status = {
   combin: new Set(),
 };
 
+function changeButton() {
+  const ENG = document.querySelectorAll('.eng');
+  const RUS = document.querySelectorAll('.rus');
+  ENG.forEach((node) => {
+    if (status.lang === 'eng') {
+      node.classList.remove('hidden');
+    } else {
+      node.classList.add('hidden');
+    }
+  });
+  RUS.forEach((node) => {
+    if (status.lang === 'rus') {
+      node.classList.remove('hidden');
+    } else {
+      node.classList.add('hidden');
+    }
+  });
+  const HIDDEN = document.querySelectorAll('span:not(.hidden)');
+  let elementKeys;
+  if (status.capsLock) {
+    if (status.shift) {
+      elementKeys = document.querySelectorAll(`.${status.lang} .shiftCaps`);
+    } else {
+      elementKeys = document.querySelectorAll(`.${status.lang} .caps`);
+    }
+  } else {
+    if (status.shift) {
+      elementKeys = document.querySelectorAll(`.${status.lang} .caseUp`);
+    } else {
+      elementKeys = document.querySelectorAll(`.${status.lang} .caseDown`);
+    }
+  }
+  elementKeys.forEach((el) => el.classList.remove('hidden'));
+  HIDDEN.forEach((el) => el.classList.add('hidden'));
+}
+
+status.lang = localStorage.getItem('lang') || 'eng';
+localStorage.setItem('lang', status.lang);
+
 class Keyboard {
   constructor() {
     this.keyCode = BUTTON_KEYS;
-    this.combin = new Set();
+    this.combin = false;
   }
 
   init() {
@@ -29,20 +68,26 @@ class Keyboard {
       ROW.classList.add('row', 'keyboard__row');
       KEYBOARD.appendChild(ROW);
       row.forEach((button) => {
+        let hiddenRUS = true;
+        if (status.lang === 'rus') {
+          hiddenRUS = false;
+        }
         const BUTTON = document.createElement('div');
         BUTTON.classList.add('key', 'row__key', button.className);
         ROW.appendChild(BUTTON);
         const ENG = document.createElement('span');
         ENG.classList.add('eng');
+        if (!hiddenRUS) ENG.classList.add('hidden');
         BUTTON.appendChild(ENG);
         const RUS = document.createElement('span');
-        RUS.classList.add('rus', 'hidden');
+        RUS.classList.add('rus');
+        if (hiddenRUS) RUS.classList.add('hidden');
         BUTTON.appendChild(RUS);
         const KEY_ENG = Object.keys(button.eng);
         for (let i = 0; i < KEY_ENG.length; i += 1) {
           const SPAN = document.createElement('span');
           SPAN.innerText = button.eng[KEY_ENG[i]];
-          if (KEY_ENG[i] === 'caseDown') {
+          if (KEY_ENG[i] === 'caseDown' && hiddenRUS) {
             SPAN.classList.add(KEY_ENG[i]);
           } else {
             SPAN.classList.add(KEY_ENG[i], 'hidden');
@@ -53,7 +98,11 @@ class Keyboard {
         for (let i = 0; i < KEY_RUS.length; i += 1) {
           const SPAN = document.createElement('span');
           SPAN.innerText = button.rus[KEY_RUS[i]];
-          SPAN.classList.add(KEY_RUS[i], 'hidden');
+          if (KEY_RUS[i] === 'caseDown' && !hiddenRUS) {
+            SPAN.classList.add(KEY_RUS[i]);
+          } else {
+            SPAN.classList.add(KEY_RUS[i], 'hidden');
+          }
           RUS.appendChild(SPAN);
         }
         BUTTON.addEventListener('mousedown', () => {
@@ -80,48 +129,35 @@ class Keyboard {
   }
 
   downEvent(event) {
+    this.combin = false;
     switch (event.code) {
       case 'ShiftLeft':
-        status.shift = true;
         console.log(status.shift);
+        if (status.shift) break;
+        if (!status.alt) status.shift = true;
+        if (status.shift) changeButton();
         break;
       case 'CapsLock':
         status.capsLock = !status.capsLock;
-        console.log(status.capsLock);
+        changeButton();
         break;
       case 'AltLeft':
         status.alt = true;
-        console.log(status.lang);
         break;
       default:
         break;
     }
-    status.combin.delete(event.code);
     status.combin.add(event.code);
     console.log(status.combin);
-    // let asd = new Set(['AltLeft', 'ShiftLeft']);
-    // console.log(asd);
-    /* for (let code of asd) {
-      if (!status.combin.has(code)) {
-        return;
-      }
-    }
-    console.log('ok');
-    status.combin.clear();
-    if (status.lang === 'eng') {
-      status.lang = 'rus';
-    } else {
-      status.lang = 'eng';
-    } */
-    // console.log('code: ' + event.code + ' key ');
-    // return false;
   }
 
   upEvent(event) {
+    this.combin = false;
     switch (event.code) {
       case 'ShiftLeft':
+        if (!status.shift) break;
         status.shift = false;
-        console.log('shift: ' + status.shift)
+        if (!status.alt) changeButton();
         break;
       case 'AltLeft':
         status.alt = false;
@@ -129,12 +165,7 @@ class Keyboard {
       default:
         break;
     }
-    // status.combin.delete(event.code);
-    // console.log(event.code);
-    // status.combin.add(event.code);
-    // console.log(status.combin);
     let asd = new Set(['AltLeft', 'ShiftLeft']);
-    // console.log(asd);
     for (let code of asd) {
       if (!status.combin.has(code)) {
         status.combin.delete(event.code);
@@ -148,6 +179,8 @@ class Keyboard {
     } else {
       status.lang = 'eng';
     }
+    changeButton();
+    localStorage.setItem('lang', status.lang);
   }
 }
 
