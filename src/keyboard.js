@@ -106,20 +106,27 @@ class Keyboard {
           RUS.appendChild(SPAN);
         }
         BUTTON.addEventListener('mousedown', () => {
-          console.log(status.capsLock);
+          // console.log(button.className);
+          const BTN = document.querySelector(`.${button.className}`);
+          BTN.classList.add('active');
           if (status.capsLock) {
             if (status.shift) {
-              console.log(button[status.lang].shiftCaps);
+              TEXTAREA.value += button[status.lang].shiftCaps;
             } else {
-              console.log(button[status.lang].caps);
+              TEXTAREA.value += button[status.lang].caps;
             }
           } else {
             if (status.shift) {
-              console.log(button[status.lang].caseUp);
+              TEXTAREA.value += button[status.lang].caseUp;
             } else {
-              console.log(button[status.lang].caseDown);
+              TEXTAREA.value += button[status.lang].caseDown;
             }
           }
+        });
+        document.addEventListener('mouseup', () => {
+          // console.log(button.className);
+          const BTN = document.querySelector(`.${button.className}`);
+          BTN.classList.remove('active');
         });
       });
     });
@@ -130,9 +137,12 @@ class Keyboard {
 
   downEvent(event) {
     this.combin = false;
+    const BUTTON = document.querySelector(`.${event.code}`);
+    BUTTON.classList.add('active');
+    const TEXTAREA = document.querySelector('textarea');
     switch (event.code) {
       case 'ShiftLeft':
-        console.log(status.shift);
+        // console.log(status.shift);
         if (status.shift) break;
         if (!status.alt) status.shift = true;
         if (status.shift) changeButton();
@@ -145,14 +155,17 @@ class Keyboard {
         status.alt = true;
         break;
       default:
+        TEXTAREA.value += BUTTON.querySelector('span:not(.hidden)').innerText;
         break;
     }
     status.combin.add(event.code);
-    console.log(status.combin);
+    console.log(event.code);
   }
 
   upEvent(event) {
     this.combin = false;
+    const BUTTON = document.querySelector(`.${event.code}`);
+    BUTTON.classList.remove('active');
     switch (event.code) {
       case 'ShiftLeft':
         if (!status.shift) break;
@@ -172,7 +185,7 @@ class Keyboard {
         return;
       }
     }
-    console.log('ok');
+    // console.log('ok');
     status.combin.clear();
     if (status.lang === 'eng') {
       status.lang = 'rus';
