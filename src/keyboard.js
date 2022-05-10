@@ -33,7 +33,8 @@ function changeButton() {
     } else {
       elementKeys = document.querySelectorAll(`.${status.lang} .caps`);
     }
-  } else {
+  }
+  if (!status.capsLock) {
     if (status.shift) {
       elementKeys = document.querySelectorAll(`.${status.lang} .caseUp`);
     } else {
@@ -106,27 +107,109 @@ class Keyboard {
           RUS.appendChild(SPAN);
         }
         BUTTON.addEventListener('mousedown', () => {
-          // console.log(button.className);
           const BTN = document.querySelector(`.${button.className}`);
-          BTN.classList.add('active');
-          if (status.capsLock) {
-            if (status.shift) {
-              TEXTAREA.value += button[status.lang].shiftCaps;
-            } else {
-              TEXTAREA.value += button[status.lang].caps;
+          if (button.className === 'CapsLock') {
+            if (!status.capsLock) {
+              BTN.classList.add('active');
             }
           } else {
+            BTN.classList.add('active');
+          }
+          TEXTAREA.focus();
+          switch (button.className) {
+            case 'ShiftLeft':
+              if (status.shift) return;
+              status.shift = true;
+              changeButton();
+              return;
+            case 'ShiftRight':
+              if (status.shift) return;
+              status.shift = true;
+              changeButton();
+              return;
+            case 'CapsLock':
+              status.capsLock = !status.capsLock;
+              changeButton();
+              return;
+            case 'AltLeft':
+              status.alt = true;
+              return;
+            case 'Tab':
+              TEXTAREA.setRangeText('\t', TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+              return;
+            case 'Space':
+              TEXTAREA.setRangeText(' ', TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+              return;
+            case 'Backspace':
+              if (TEXTAREA.selectionStart > 0) {
+                TEXTAREA.setRangeText('', TEXTAREA.selectionStart - 1, TEXTAREA.selectionStart, 'end');
+              }
+              return;
+            case 'Delete':
+              if (TEXTAREA.selectionEnd > -1) {
+                TEXTAREA.setRangeText('', TEXTAREA.selectionStart, TEXTAREA.selectionStart + 1, 'end');
+              }
+              return;
+            case 'Enter':
+              if (TEXTAREA.selectionEnd > 0) {
+                TEXTAREA.setRangeText('\n', TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+              }
+              return;
+            case 'ControlLeft':
+              return;
+            case 'ControlRight':
+              return;
+            case 'AltRight':
+              return;
+            case 'MetaLeft':
+              return;
+            default:
+              break;
+          }
+          if (status.capsLock) {
             if (status.shift) {
-              TEXTAREA.value += button[status.lang].caseUp;
+              TEXTAREA.setRangeText(button[status.lang].shiftCaps, TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
             } else {
-              TEXTAREA.value += button[status.lang].caseDown;
+              TEXTAREA.setRangeText(button[status.lang].caps, TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+            }
+          }
+          if (!status.capsLock) {
+            if (status.shift) {
+              TEXTAREA.setRangeText(button[status.lang].caseUp, TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+            } else {
+              TEXTAREA.setRangeText(button[status.lang].caseDown, TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
             }
           }
         });
         document.addEventListener('mouseup', () => {
-          // console.log(button.className);
           const BTN = document.querySelector(`.${button.className}`);
-          BTN.classList.remove('active');
+          if (button.className === 'CapsLock') {
+            if (!status.capsLock) {
+              BTN.classList.remove('active');
+            }
+          } else {
+            BTN.classList.remove('active');
+          }
+          switch (button.className) {
+            case 'ShiftLeft':
+              if (!status.shift) break;
+              status.shift = false;
+              changeButton();
+              break;
+            case 'ShiftRight':
+              if (!status.shift) break;
+              status.shift = false;
+              changeButton();
+              break;
+            case 'AltLeft':
+              status.alt = false;
+              break;
+            case 'CapsLock':
+              status.alt = false;
+              break;
+            default:
+              break;
+          }
         });
       });
     });
@@ -138,14 +221,25 @@ class Keyboard {
   downEvent(event) {
     this.combin = false;
     const BUTTON = document.querySelector(`.${event.code}`);
-    BUTTON.classList.add('active');
+    if (event.code === 'CapsLock') {
+      if (!status.capsLock) {
+        BUTTON.classList.add('active');
+      }
+    } else {
+      BUTTON.classList.add('active');
+    }
     const TEXTAREA = document.querySelector('textarea');
+    TEXTAREA.focus();
     switch (event.code) {
       case 'ShiftLeft':
-        // console.log(status.shift);
         if (status.shift) break;
         if (!status.alt) status.shift = true;
         if (status.shift) changeButton();
+        break;
+      case 'ShiftRight':
+        if (status.shift) break;
+        status.shift = true;
+        changeButton();
         break;
       case 'CapsLock':
         status.capsLock = !status.capsLock;
@@ -157,50 +251,74 @@ class Keyboard {
       case 'Tab':
         TEXTAREA.setRangeText('\t', TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
         break;
+      case 'Space':
+        TEXTAREA.setRangeText(' ', TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
+        break;
       case 'Backspace':
         if (TEXTAREA.selectionStart > 0) {
           TEXTAREA.setRangeText('', TEXTAREA.selectionStart - 1, TEXTAREA.selectionStart, 'end');
         }
         break;
       case 'Delete':
-        if (TEXTAREA.selectionEnd > 0) {
+        if (TEXTAREA.selectionEnd > -1) {
           TEXTAREA.setRangeText('', TEXTAREA.selectionStart, TEXTAREA.selectionStart + 1, 'end');
         }
         break;
       case 'Enter':
         if (TEXTAREA.selectionEnd > 0) {
-          TEXTAREA.setRangeText('', TEXTAREA.selectionStart, TEXTAREA.selectionStart + 1, 'end');
+          TEXTAREA.setRangeText('\n', TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
         }
+        break;
+      case 'ControlLeft':
+        break;
+      case 'ControlRight':
+        break;
+      case 'AltRight':
+        break;
+      case 'MetaLeft':
         break;
       default:
         TEXTAREA.setRangeText(BUTTON.querySelector('span:not(.hidden)').innerText, TEXTAREA.selectionStart, TEXTAREA.selectionStart, 'end');
-        // console.log(fff);
         break;
     }
     status.combin.add(event.code);
-    console.log(event.code);
     return false;
   }
 
   upEvent(event) {
     this.combin = false;
     const BUTTON = document.querySelector(`.${event.code}`);
-    BUTTON.classList.remove('active');
+    if (event.code === 'CapsLock') {
+      if (!status.capsLock) {
+        BUTTON.classList.remove('active');
+      }
+    } else {
+      BUTTON.classList.remove('active');
+    }
     switch (event.code) {
       case 'ShiftLeft':
         if (!status.shift) break;
         status.shift = false;
         if (!status.alt) changeButton();
         break;
+      case 'ShiftRight':
+        if (!status.shift) break;
+        status.shift = false;
+        changeButton();
+        break;
       case 'AltLeft':
+        status.alt = false;
+        break;
+      case 'CapsLock':
         status.alt = false;
         break;
       default:
         break;
     }
-    let asd = new Set(['AltLeft', 'ShiftLeft']);
-    for (let code of asd) {
-      if (!status.combin.has(code)) {
+    const combinKeys = new Set(['AltLeft', 'ShiftLeft']);
+    const COMBIN_KEYS = Array.from(combinKeys);
+    for (let i = 0; i < COMBIN_KEYS.length; i += 1) {
+      if (!status.combin.has(COMBIN_KEYS[i])) {
         status.combin.delete(event.code);
         return false;
       }

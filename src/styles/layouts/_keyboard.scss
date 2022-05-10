@@ -23,6 +23,13 @@
   border: 2px solid $color-primary;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    span {
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+  }
 }
 
 .eng, .rus {
@@ -48,4 +55,5 @@
 
 .active {
   background-color: green;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
