@@ -1,0 +1,8 @@
+.container {
+    max-width: $content-width;
+    margin: auto;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

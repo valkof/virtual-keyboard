@@ -1,0 +1,59 @@
+.keyboard_box {
+  width: 100%;
+}
+
+.keyboard {
+  width: 100%;
+  padding: 10px 10px 0px 0px;
+  border: 2px solid $color-primary;
+  border-radius: 10px;
+}
+
+.keyboard__row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.row__key {
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-left: 10px;
+  border: 2px solid $color-primary;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover {
+    span {
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+  }
+}
+
+.eng, .rus {
+  display: flex;
+  justify-content: center;
+}
+
+.Space {
+  flex-shrink: 0.58;
+}
+
+.ShiftLeft, .ShiftRight {
+  flex-shrink: 0.93;
+}
+
+.Enter {
+  flex-shrink: 0.9;
+}
+
+.Tab {
+  flex-shrink: 0.94;
+}
+
+.active {
+  background-color: green;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
