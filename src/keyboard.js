@@ -323,7 +323,6 @@ class Keyboard {
         return false;
       }
     }
-    // console.log('ok');
     status.combin.clear();
     if (status.lang === 'eng') {
       status.lang = 'rus';
@@ -332,9 +331,6 @@ class Keyboard {
     }
     changeButton();
     localStorage.setItem('lang', status.lang);
-    // const TEXTAREA = document.querySelector('textarea');
-    // TEXTAREA.focus(true);
-    // document.onkeyup = () => false;
     return false;
   }
 }

@@ -9,14 +9,10 @@ html {
 
 body {
   @include font ($font-main, 1.5rem, 2.4rem);
-  //color: $color-dark-xl;
-  //background-color: $color-header-gradient-1;
-  //position: relative;
 }
 
 h1 {
   @include font ($font-main, 3.3rem, 3.52rem);
-  //color: $color-primary;
   margin: 10px 0px;
 }
 
