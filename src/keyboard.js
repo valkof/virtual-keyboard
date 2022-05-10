@@ -61,6 +61,8 @@ class Keyboard {
     KEYBOARD_BOX.appendChild(TEXTAREA);
     TEXTAREA.onkeydown = () => false;
     TEXTAREA.onkeyup = () => false;
+    document.onkeydown = () => false;
+    document.onkeyup = () => false;
     const KEYBOARD = document.createElement('div');
     KEYBOARD.classList.add('keyboard');
     KEYBOARD_BOX.appendChild(KEYBOARD);
